@@ -303,6 +303,10 @@ class BaseTacotron(BaseTTS):
             r, trainer.config.batch_size = gradual_training_scheduler(trainer.total_steps_done, trainer.config)
             trainer.config.r = r
             self.decoder.set_r(r)
+            # TFC fix. need this or batching will be done wrong
+            if trainer.train_loader is not None:
+                trainer.train_loader.dataset.outputs_per_step = r
+                trainer.eval_loader.dataset.outputs_per_step = r
             if trainer.config.bidirectional_decoder:
                 trainer.model.decoder_backward.set_r(r)
             logger.info("Number of output frames: %d", self.decoder.r)
