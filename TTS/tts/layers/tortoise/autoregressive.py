@@ -12,10 +12,16 @@ from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 
 from TTS.tts.layers.tortoise.arch_utils import AttentionBlock, TypicalLogitsWarper
 
-if Version(transformers.__version__) >= Version("4.45"):
-    isin = transformers.pytorch_utils.isin_mps_friendly
-else:
-    isin = torch.isin
+# if Version(transformers.__version__) >= Version("4.45"):
+#     isin = transformers.pytorch_utils.isin_mps_friendly
+# else:
+#     isin = torch.isin
+
+isin = getattr(
+    transformers.pytorch_utils,
+    "isin_mps_friendly",
+    torch.isin,
+)
 
 
 def null_position_embeddings(range, dim):
